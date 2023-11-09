@@ -35,7 +35,8 @@ public class JobTask {
         List<Item> items = new ArrayList<>();
 
         for (String keyword : keywords) {
-            Rss rss = jobClient.getJobs(url.formatted(keyword));
+            String link = url.replace("keyword", keyword);
+            Rss rss = jobClient.getJobs(link);
             items.addAll(rss.getItems());
         }
 
