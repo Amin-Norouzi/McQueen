@@ -15,14 +15,14 @@ public class JobUtil {
                 .replaceAll("-", "").trim();
     }
 
-    public Long extract(String url) {
-        String extracted = url.split(URL_CHAR)[1]
+    public String extract(String url) {
+       return url.split(URL_CHAR)[1]
                 .replace("?source=rss", "").trim();
-
-        return Long.valueOf(extracted);
     }
 
     public String shorten(String str) {
+        str = str.replaceAll("<br>", "");
+
         String[] words = str.split("\\s+");
         if (words.length <= SHORT_STRING_LENGTH) {
             return str;

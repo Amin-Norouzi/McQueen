@@ -1,7 +1,7 @@
-package dev.aminnorouzi.mcqueen.handler.impl;
+package dev.aminnorouzi.mcqueen.bot.handler.impl;
 
 import dev.aminnorouzi.mcqueen.bot.Bot;
-import dev.aminnorouzi.mcqueen.handler.Handler;
+import dev.aminnorouzi.mcqueen.bot.handler.Handler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;

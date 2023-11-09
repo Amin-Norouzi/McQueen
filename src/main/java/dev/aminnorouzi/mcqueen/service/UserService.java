@@ -1,7 +1,6 @@
 package dev.aminnorouzi.mcqueen.service;
 
-import dev.aminnorouzi.mcqueen.exception.UserAlreadyExistsException;
-import dev.aminnorouzi.mcqueen.model.User;
+import dev.aminnorouzi.mcqueen.model.user.User;
 import dev.aminnorouzi.mcqueen.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +37,7 @@ public class UserService {
     public void exists(Long chatId) {
         boolean exists = userRepository.existsByChatId(chatId);
         if (exists) {
-            throw new UserAlreadyExistsException();
+            throw new RuntimeException("You already have an account!");
         }
     }
 
@@ -46,6 +45,14 @@ public class UserService {
         List<User> found = userRepository.findAll();
 
         log.info("Found all users: {}", found);
+        return found;
+    }
+
+    public User getByChatId(Long chatId) {
+        User found = userRepository.findByChatId(chatId)
+                .orElseThrow(() -> new RuntimeException("User doesn't exist!"));
+
+        log.info("Found a user: {}", found);
         return found;
     }
 

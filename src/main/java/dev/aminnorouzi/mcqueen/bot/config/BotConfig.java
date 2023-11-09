@@ -1,7 +1,9 @@
-package dev.aminnorouzi.mcqueen.configuration;
+package dev.aminnorouzi.mcqueen.bot.config;
 
-import dev.aminnorouzi.mcqueen.handler.Handler;
-import dev.aminnorouzi.mcqueen.handler.impl.JoinHandler;
+import dev.aminnorouzi.mcqueen.bot.handler.Handler;
+import dev.aminnorouzi.mcqueen.bot.handler.impl.AssignHandler;
+import dev.aminnorouzi.mcqueen.bot.handler.impl.JoinHandler;
+import dev.aminnorouzi.mcqueen.bot.handler.impl.StatusHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +16,8 @@ import java.util.Set;
 public class BotConfig {
 
     private final JoinHandler joinHandler;
+    private final StatusHandler statusHandler;
+    private final AssignHandler assignHandler;
 
     @Value("${telegram.bot.token}")
     private String botToken;
@@ -34,7 +38,9 @@ public class BotConfig {
     @Bean
     public Set<Handler> handlers() {
         return Set.of(
-                joinHandler
+                joinHandler,
+                statusHandler,
+                assignHandler
         );
     }
 }

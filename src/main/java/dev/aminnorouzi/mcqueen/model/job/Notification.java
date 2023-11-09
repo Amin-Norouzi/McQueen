@@ -1,4 +1,4 @@
-package dev.aminnorouzi.mcqueen.model;
+package dev.aminnorouzi.mcqueen.model.job;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,19 +15,19 @@ import java.util.Date;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "`user`")
+@Table(name = "`notification`")
 @EntityListeners(AuditingEntityListener.class)
-public class User {
+public class Notification {
 
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long userId;
     private Long chatId;
-    private String username;
-    private String firstName;
-    private String lastName;
+    private Integer messageId;
+    private String upworkId;
 
     @CreatedDate
     @Column(updatable = false)

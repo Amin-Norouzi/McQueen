@@ -1,12 +1,10 @@
 package dev.aminnorouzi.mcqueen.bot;
 
-import dev.aminnorouzi.mcqueen.handler.impl.UpdateHandler;
+import dev.aminnorouzi.mcqueen.bot.handler.impl.UpdateHandler;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @Component
 public class Bot extends TelegramLongPollingBot {
@@ -25,7 +23,6 @@ public class Bot extends TelegramLongPollingBot {
     @SneakyThrows
     @Override
     public void onUpdateReceived(Update update) {
-
         if (handler.supports(update)) {
             handler.handle(update, this);
         }

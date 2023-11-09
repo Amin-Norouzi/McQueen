@@ -1,4 +1,4 @@
-package dev.aminnorouzi.mcqueen.model;
+package dev.aminnorouzi.mcqueen.model.rss;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
