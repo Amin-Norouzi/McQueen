@@ -40,6 +40,14 @@ public class UserService {
         return getByChatId(chatId);
     }
 
+    public User get(Long id) {
+        User found = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User doesn't exist!"));
+
+        log.info("Found a user: {}", found);
+        return found;
+    }
+
     public boolean exists(Long chatId) {
         return userRepository.existsByChatId(chatId);
     }

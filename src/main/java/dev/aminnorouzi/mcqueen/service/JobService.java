@@ -8,6 +8,7 @@ import dev.aminnorouzi.mcqueen.util.DateUtil;
 import dev.aminnorouzi.mcqueen.util.JobUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -60,6 +61,15 @@ public class JobService {
         }
 
         return newJobs;
+    }
+
+    public List<Job> report(Date date) {
+        List<Job> jobs = jobRepository.findAll().stream()
+                .filter(job -> DateUtils.isSameDay(job.getCreatedAt(), date))
+                .toList();
+
+        log.info("Reported jobs: date={}, {}", date, jobs);
+        return jobs;
     }
 
     public boolean exists(String upworkId) {

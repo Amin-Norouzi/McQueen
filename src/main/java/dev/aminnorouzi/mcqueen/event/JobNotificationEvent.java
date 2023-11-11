@@ -9,11 +9,11 @@ import java.util.List;
 
 @Getter
 @Setter
-public class NotificationEvent extends ApplicationEvent {
+public class JobNotificationEvent extends ApplicationEvent {
 
     private List<Job> jobs;
 
-    public NotificationEvent(List<Job> jobs) {
+    public JobNotificationEvent(List<Job> jobs) {
         super(jobs);
         this.jobs = jobs;
     }

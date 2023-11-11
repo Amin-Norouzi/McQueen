@@ -1,7 +1,7 @@
 package dev.aminnorouzi.mcqueen.task;
 
 import dev.aminnorouzi.mcqueen.client.JobClient;
-import dev.aminnorouzi.mcqueen.event.NotificationEvent;
+import dev.aminnorouzi.mcqueen.event.JobNotificationEvent;
 import dev.aminnorouzi.mcqueen.model.job.Job;
 import dev.aminnorouzi.mcqueen.model.rss.Item;
 import dev.aminnorouzi.mcqueen.model.rss.Rss;
@@ -30,22 +30,17 @@ public class JobTask {
     @Value("#{'${rss.client.keywords}'.split(',')}")
     private List<String> keywords;
 
-    @Scheduled(cron = "0 */1 * * * ?")
+    @Scheduled(cron = "0 */20 * * * ?")
     public void getJobsFromRss() throws URISyntaxException {
         List<Item> items = new ArrayList<>();
 
-        int count = 0;
         for (String keyword : keywords) {
-            if (count == 1) {
-                break;
-            }
             String link = url.replace("keyword", keyword);
             Rss rss = jobClient.getJobs(link);
             items.addAll(rss.getItems());
-            count++;
         }
 
         List<Job> jobs = jobService.separate(items);
-        applicationEventPublisher.publishEvent(new NotificationEvent(jobs));
+        applicationEventPublisher.publishEvent(new JobNotificationEvent(jobs));
     }
 }

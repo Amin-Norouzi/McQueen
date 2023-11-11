@@ -2,7 +2,7 @@ package dev.aminnorouzi.mcqueen.listener;
 
 import dev.aminnorouzi.mcqueen.bot.Bot;
 import dev.aminnorouzi.mcqueen.bot.keyboard.impl.AssignKeyboard;
-import dev.aminnorouzi.mcqueen.event.NotificationEvent;
+import dev.aminnorouzi.mcqueen.event.JobNotificationEvent;
 import dev.aminnorouzi.mcqueen.model.job.Job;
 import dev.aminnorouzi.mcqueen.util.StringUtil;
 import lombok.RequiredArgsConstructor;
@@ -14,13 +14,13 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @Component
 @RequiredArgsConstructor
-public class NotificationEventListener implements ApplicationListener<NotificationEvent> {
+public class JobNotificationEventListener implements ApplicationListener<JobNotificationEvent> {
 
     private final Bot bot;
     private final StringUtil stringUtil;
 
     @Override
-    public void onApplicationEvent(NotificationEvent event) {
+    public void onApplicationEvent(JobNotificationEvent event) {
         for (Job job : event.getJobs()) {
             AssignKeyboard keyboard = new AssignKeyboard();
             String message = stringUtil.generateJobPostingMessage(job);

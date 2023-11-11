@@ -3,6 +3,7 @@ package dev.aminnorouzi.mcqueen.util;
 import dev.aminnorouzi.mcqueen.bot.data.MessageTemplate;
 import dev.aminnorouzi.mcqueen.model.job.Job;
 import dev.aminnorouzi.mcqueen.model.job.Status;
+import dev.aminnorouzi.mcqueen.model.report.Report;
 import dev.aminnorouzi.mcqueen.model.user.User;
 import org.springframework.stereotype.Component;
 
@@ -27,5 +28,10 @@ public class StringUtil {
     public String generateJobPostingSAssignMessage(Job job, User user) {
         return MessageTemplate.JOB_POSTING_ASSIGNED.getValue().formatted(
                 job.getTitle(), job.getPostedAt(), job.getDescription(), job.getSalary(), job.getCategory(), job.getCountry(), job.getSkills(), job.getUrl(), user.getUsername());
+    }
+
+    public String generateDailyReportMessage(Report report) {
+        return MessageTemplate.DAILY_REPORT.getValue().formatted(
+               report.getDate(), report.getTotal(), report.getSubmitted(), report.getRejected(), report.getHero().getUsername());
     }
 }
