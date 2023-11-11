@@ -29,8 +29,14 @@ public class Job {
     private String url;
     private String title;
 
+    @ToString.Exclude
     @Column(length = 1250)
     private String description;
+
+    private String salary;
+    private String country;
+    private String category;
+    private String skills;
 
     private Status status;
 

@@ -25,6 +25,9 @@ public class BotConfig {
     @Value("${telegram.bot.username}")
     private String botUsername;
 
+    @Value("${telegram.bot.channel-id}")
+    private String channelId;
+
     @Bean
     public String token() {
         return botToken;
@@ -33,6 +36,11 @@ public class BotConfig {
     @Bean
     public String username() {
         return botUsername;
+    }
+
+    @Bean
+    public String channel() {
+        return channelId;
     }
 
     @Bean

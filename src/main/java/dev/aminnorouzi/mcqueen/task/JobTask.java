@@ -34,10 +34,15 @@ public class JobTask {
     public void getJobsFromRss() throws URISyntaxException {
         List<Item> items = new ArrayList<>();
 
+        int count = 0;
         for (String keyword : keywords) {
+            if (count == 1) {
+                break;
+            }
             String link = url.replace("keyword", keyword);
             Rss rss = jobClient.getJobs(link);
             items.addAll(rss.getItems());
+            count++;
         }
 
         List<Job> jobs = jobService.separate(items);

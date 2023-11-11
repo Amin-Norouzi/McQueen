@@ -17,15 +17,11 @@ public class UserService {
     private final UserRepository userRepository;
 
     public User create(Update update) {
-        Long chatId = update.getMessage().getChatId();
-
-        exists(chatId);
-
         User user = User.builder()
-                .chatId(chatId)
-                .username(update.getMessage().getFrom().getUserName())
-                .firstName(update.getMessage().getFrom().getFirstName())
-                .lastName(update.getMessage().getFrom().getLastName())
+                .chatId(update.getCallbackQuery().getFrom().getId())
+                .username(update.getCallbackQuery().getFrom().getUserName())
+                .firstName(update.getCallbackQuery().getFrom().getFirstName())
+                .lastName(update.getCallbackQuery().getFrom().getLastName())
                 .build();
 
         User saved = userRepository.save(user);
@@ -34,11 +30,18 @@ public class UserService {
         return saved;
     }
 
-    public void exists(Long chatId) {
-        boolean exists = userRepository.existsByChatId(chatId);
-        if (exists) {
-            throw new RuntimeException("You already have an account!");
+    public User find(Update update) {
+        Long chatId = update.getCallbackQuery().getFrom().getId();
+
+        if (!exists(chatId)) {
+            return create(update);
         }
+
+        return getByChatId(chatId);
+    }
+
+    public boolean exists(Long chatId) {
+        return userRepository.existsByChatId(chatId);
     }
 
     public List<User> getAll() {

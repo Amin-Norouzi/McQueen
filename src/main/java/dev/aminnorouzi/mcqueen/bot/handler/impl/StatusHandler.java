@@ -2,12 +2,9 @@ package dev.aminnorouzi.mcqueen.bot.handler.impl;
 
 import dev.aminnorouzi.mcqueen.bot.Bot;
 import dev.aminnorouzi.mcqueen.bot.handler.Handler;
-import dev.aminnorouzi.mcqueen.bot.keyboard.impl.StatusKeyboard;
 import dev.aminnorouzi.mcqueen.model.job.Job;
-import dev.aminnorouzi.mcqueen.model.job.Notification;
 import dev.aminnorouzi.mcqueen.model.user.User;
 import dev.aminnorouzi.mcqueen.service.JobService;
-import dev.aminnorouzi.mcqueen.service.NotificationService;
 import dev.aminnorouzi.mcqueen.service.UserService;
 import dev.aminnorouzi.mcqueen.util.StringUtil;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +16,6 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.util.List;
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -28,7 +23,6 @@ public class StatusHandler implements Handler {
 
     private final JobService jobService;
     private final UserService userService;
-    private final NotificationService notificationService;
     private final StringUtil stringUtil;
 
     @Override
@@ -41,28 +35,25 @@ public class StatusHandler implements Handler {
     @Override
     public void handle(Update update, Bot bot) {
         CallbackQuery callback = update.getCallbackQuery();
-        Long chatId = callback.getFrom().getId();
         String status = callback.getData().split("-")[1];
         String upworkId = callback.getData().split("-")[2];
+        Integer messageId = callback.getMessage().getMessageId();
 
-        User user = userService.getByChatId(chatId);
+        User user = userService.find(update);
         Job job = jobService.update(upworkId, status);
 
         answer(bot, callback.getId(), "The job status has been updated.");
 
         String message = stringUtil.generateJobPostingStatusMessage(job, user);
 
-        List<Notification> notifications = notificationService.getAllByUpworkId(upworkId);
-        for (Notification notification : notifications) {
-            EditMessageText editMessageText = new EditMessageText();
-            editMessageText.setChatId(notification.getChatId());
-            editMessageText.setText(message);
-            editMessageText.setMessageId(notification.getMessageId());
-            editMessageText.disableWebPagePreview();
-            editMessageText.setParseMode(ParseMode.HTML);
-            editMessageText.setReplyMarkup(null);
+        EditMessageText editMessageText = new EditMessageText();
+        editMessageText.setChatId(bot.getChannel());
+        editMessageText.setText(message);
+        editMessageText.setMessageId(messageId);
+        editMessageText.disableWebPagePreview();
+        editMessageText.setParseMode(ParseMode.HTML);
+        editMessageText.setReplyMarkup(null);
 
-            bot.execute(editMessageText);
-        }
+        bot.execute(editMessageText);
     }
 }

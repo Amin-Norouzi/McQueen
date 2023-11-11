@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -26,14 +27,19 @@ public class JobService {
     public Job save(Item item) {
         String title = jobUtil.simplify(item.getTitle());
         String description = jobUtil.shorten(item.getDescription());
-        String upworkId = jobUtil.extract(item.getLink());
+        String upworkId = jobUtil.extractId(item.getLink());
         Date postedAt = dateUtil.convert(item.getPubDate());
+        Map<String, String> metadata = jobUtil.extractMetadata(item.getDescription());
 
         Job job = Job.builder()
                 .upworkId(upworkId)
                 .url(item.getLink())
                 .title(title)
                 .description(description)
+                .salary(metadata.get("Hourly Range"))
+                .country(metadata.get("Country"))
+                .category(metadata.get("Category"))
+                .skills(metadata.get("Skills"))
                 .status(Status.POSTED)
                 .postedAt(postedAt)
                 .build();
@@ -47,7 +53,7 @@ public class JobService {
     public List<Job> separate(List<Item> items) {
         List<Job> newJobs = new ArrayList<>();
         for (Item item : items) {
-            String upworkId = jobUtil.extract(item.getLink());
+            String upworkId = jobUtil.extractId(item.getLink());
             if (!exists(upworkId)) {
                 newJobs.add(save(item));
             }
