@@ -53,7 +53,13 @@ public class JobService {
 
     public List<Job> separate(List<Item> items) {
         List<Job> newJobs = new ArrayList<>();
+        Date startDate = dateUtil.getStartDate();
+
         for (Item item : items) {
+            if (!dateUtil.convert(item.getPubDate()).after(startDate)) {
+                continue;
+            }
+
             String upworkId = jobUtil.extractId(item.getLink());
             if (!exists(upworkId)) {
                 newJobs.add(save(item));

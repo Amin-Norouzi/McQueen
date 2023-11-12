@@ -22,4 +22,13 @@ public class DateUtil {
     public String now() {
         return formatter.format(new Date());
     }
+
+    public Date getStartDate() {
+        try {
+            return new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")
+                    .parse("Sun Nov 12 23:59:59 IRST 2023");
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
