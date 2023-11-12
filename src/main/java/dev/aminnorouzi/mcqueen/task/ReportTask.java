@@ -12,7 +12,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -26,19 +25,12 @@ public class ReportTask {
     private final UserService userService;
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    @Scheduled(cron = "0 55 23 * * ?")
+    @Scheduled(cron = "0 59 23 * * ?")
     public void getDailyReport() {
         Date today = new Date();
-        List<Job> jobs = jobService.report(today);
-
-        int submitted = jobs.stream()
-                .filter(job -> job.getStatus().equals(Status.SUBMITTED))
-                .toList()
-                .size();
-        int rejected = jobs.stream()
-                .filter(job -> job.getStatus().equals(Status.REJECTED))
-                .toList()
-                .size();
+        List<Job> jobs = jobService.report(today, Status.POSTED);
+        List<Job> submitted = jobService.report(today, Status.SUBMITTED);
+        List<Job> rejected = jobService.report(today, Status.REJECTED);
 
         Long heroId = jobs.stream()
                 .filter(job -> !job.getStatus().equals(Status.POSTED))
@@ -52,8 +44,8 @@ public class ReportTask {
 
         Report report = Report.builder()
                 .total(jobs.size())
-                .submitted(submitted)
-                .rejected(rejected)
+                .submitted(submitted.size())
+                .rejected(rejected.size())
                 .hero(here)
                 .date(today)
                 .build();

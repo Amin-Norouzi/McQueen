@@ -69,12 +69,12 @@ public class JobService {
         return newJobs;
     }
 
-    public List<Job> report(Date date) {
-        List<Job> jobs = jobRepository.findAll().stream()
+    public List<Job> report(Date date, Status status) {
+        List<Job> jobs = jobRepository.findByStatus(status).stream()
                 .filter(job -> DateUtils.isSameDay(job.getCreatedAt(), date))
                 .toList();
 
-        log.info("Reported jobs: date={}, {}", date, jobs);
+        log.info("Reported jobs: status, {}, date={}, {}", status, date, jobs);
         return jobs;
     }
 
