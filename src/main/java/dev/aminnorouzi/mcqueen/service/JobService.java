@@ -57,6 +57,7 @@ public class JobService {
 
         for (Item item : items) {
             if (!dateUtil.convert(item.getPubDate()).after(startDate)) {
+                System.out.println(item.getTitle() + " is outdated.");
                 continue;
             }
 

@@ -7,6 +7,7 @@ import dev.aminnorouzi.mcqueen.model.rss.Item;
 import dev.aminnorouzi.mcqueen.model.rss.Rss;
 import dev.aminnorouzi.mcqueen.service.JobService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JobTask {
@@ -31,8 +33,10 @@ public class JobTask {
     @Value("#{'${rss.client.keywords}'.split(',')}")
     private List<String> keywords;
 
-    @Scheduled(cron = "0 */20 * * * ?")
+    @Scheduled(cron = "0 */10 * * * ?")
     public void getJobsFromRss() throws URISyntaxException {
+        log.info("Searching for new jobs...");
+
         List<Item> items = new ArrayList<>();
 
         for (String keyword : keywords) {

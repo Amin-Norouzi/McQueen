@@ -36,6 +36,9 @@ public class Job {
     private String salary;
     private String country;
     private String category;
+
+    @ToString.Exclude
+    @Column(length = 1250)
     private String skills;
 
     private Status status;
