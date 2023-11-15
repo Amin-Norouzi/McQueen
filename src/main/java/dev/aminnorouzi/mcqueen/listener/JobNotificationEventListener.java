@@ -29,7 +29,7 @@ public class JobNotificationEventListener implements ApplicationListener<JobNoti
             sendMessage.setText(message);
             sendMessage.disableWebPagePreview();
             sendMessage.setParseMode(ParseMode.HTML);
-//            sendMessage.setReplyMarkup(keyboard.getKeyboard(job.getUpworkId()));
+            sendMessage.setReplyMarkup(keyboard.getKeyboard(job.getUpworkId()));
             sendMessage.setChatId(bot.getChannel());
 
             try {
