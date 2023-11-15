@@ -30,7 +30,7 @@ public class JobTask {
     @Value("#{'${rss.client.keywords}'.split(',')}")
     private List<String> keywords;
 
-    @Scheduled(cron = "0 */01 * * * ?")
+    @Scheduled(cron = "0 */05 * * * ?")
     public void getJobsFromRss() {
         List<SyndEntry> entries = new ArrayList<>();
 

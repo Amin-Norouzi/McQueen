@@ -26,7 +26,7 @@ public class DateUtil {
     public Date getStartDate() {
         try {
             return new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")
-                    .parse("Sun Nov 14 23:59:59 IRST 2023");
+                    .parse("Sun Nov 15 23:59:59 IRST 2023");
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
