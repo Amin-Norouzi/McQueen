@@ -1,8 +1,8 @@
 package dev.aminnorouzi.mcqueen.service;
 
+import com.rometools.rome.feed.synd.SyndEntry;
 import dev.aminnorouzi.mcqueen.model.job.Job;
 import dev.aminnorouzi.mcqueen.model.job.Status;
-import dev.aminnorouzi.mcqueen.model.rss.Item;
 import dev.aminnorouzi.mcqueen.repository.JobRepository;
 import dev.aminnorouzi.mcqueen.util.DateUtil;
 import dev.aminnorouzi.mcqueen.util.JobUtil;
@@ -11,10 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -25,16 +22,15 @@ public class JobService {
     private final JobUtil jobUtil;
     private final DateUtil dateUtil;
 
-    public Job save(Item item) {
-        String title = jobUtil.simplify(item.getTitle());
-        String description = jobUtil.shorten(item.getDescription());
-        String upworkId = jobUtil.extractId(item.getLink());
-        Date postedAt = dateUtil.convert(item.getPubDate());
-        Map<String, String> metadata = jobUtil.extractMetadata(item.getDescription());
+    public Job save(SyndEntry entry) {
+        String title = jobUtil.simplify(entry.getTitle());
+        String description = jobUtil.shorten(entry.getDescription().getValue());
+        String upworkId = jobUtil.extractId(entry.getLink());
+        Map<String, String> metadata = jobUtil.extractMetadata(entry.getDescription().getValue());
 
         Job job = Job.builder()
                 .upworkId(upworkId)
-                .url(item.getLink())
+                .url(entry.getLink())
                 .title(title)
                 .description(description)
                 .salary(metadata.get("Hourly Range"))
@@ -42,7 +38,7 @@ public class JobService {
                 .category(metadata.get("Category"))
                 .skills(metadata.get("Skills"))
                 .status(Status.POSTED)
-                .postedAt(postedAt)
+                .postedAt(entry.getPublishedDate())
                 .build();
 
         Job saved = jobRepository.save(job);
@@ -51,23 +47,24 @@ public class JobService {
         return saved;
     }
 
-    public List<Job> separate(List<Item> items) {
+    public List<Job> separate(List<SyndEntry> SyndEntry) {
         List<Job> newJobs = new ArrayList<>();
         Date startDate = dateUtil.getStartDate();
 
-        for (Item item : items) {
-            if (!dateUtil.convert(item.getPubDate()).after(startDate)) {
-                System.out.println(item.getTitle() + " is outdated.");
+        for (SyndEntry entry : SyndEntry) {
+            if (!entry.getPublishedDate().after(startDate)) {
                 continue;
             }
 
-            String upworkId = jobUtil.extractId(item.getLink());
+            String upworkId = jobUtil.extractId(entry.getLink());
             if (!exists(upworkId)) {
-                newJobs.add(save(item));
+                newJobs.add(save(entry));
             }
         }
 
-        return newJobs;
+        return newJobs.stream()
+                .sorted(Comparator.comparing(Job::getPostedAt))
+                .toList();
     }
 
     public List<Job> report(Date date, Status status) {

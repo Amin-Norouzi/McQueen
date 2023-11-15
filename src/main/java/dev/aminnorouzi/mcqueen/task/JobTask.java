@@ -1,10 +1,9 @@
 package dev.aminnorouzi.mcqueen.task;
 
+import com.rometools.rome.feed.synd.SyndEntry;
 import dev.aminnorouzi.mcqueen.client.JobClient;
 import dev.aminnorouzi.mcqueen.event.JobNotificationEvent;
 import dev.aminnorouzi.mcqueen.model.job.Job;
-import dev.aminnorouzi.mcqueen.model.rss.Item;
-import dev.aminnorouzi.mcqueen.model.rss.Rss;
 import dev.aminnorouzi.mcqueen.service.JobService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,9 +12,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -33,19 +30,17 @@ public class JobTask {
     @Value("#{'${rss.client.keywords}'.split(',')}")
     private List<String> keywords;
 
-    @Scheduled(cron = "0 */10 * * * ?")
-    public void getJobsFromRss() throws URISyntaxException {
-        log.info("Searching for new jobs...");
-
-        List<Item> items = new ArrayList<>();
+    @Scheduled(cron = "0 */01 * * * ?")
+    public void getJobsFromRss() {
+        List<SyndEntry> entries = new ArrayList<>();
 
         for (String keyword : keywords) {
             String link = url.replace("keyword", keyword);
-            Rss rss = jobClient.getJobs(link);
-            items.addAll(rss.getItems());
+            List<SyndEntry> found = jobClient.getJobs(link);
+            entries.addAll(found);
         }
 
-        List<Job> jobs = jobService.separate(items);
+        List<Job> jobs = jobService.separate(entries);
         applicationEventPublisher.publishEvent(new JobNotificationEvent(jobs));
     }
 }

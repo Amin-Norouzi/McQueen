@@ -12,7 +12,7 @@ public class JobUtil {
 
     private static final String SIMPLIFY_WORD = "- Upwork";
     private static final String METADATA_KEYWORD = "<b>Hourly Range</b>";
-    private static final String URL_CHAR = "_~";
+    private static final String URL_CHAR = "_%7";
     private static final int SHORT_STRING_LENGTH = 35;
     private static final Pattern METADATA_PATTERN = Pattern.compile("<b>([^<]+)</b>:\\s*([^<]+)");
 
@@ -29,7 +29,7 @@ public class JobUtil {
 
     public String shorten(String str) {
         String extracted = str.split(METADATA_KEYWORD)[0]
-                .replaceAll("<br>|<b>|</b>|\n", "").trim();
+                .replaceAll("<br />|<br>|<b>|</b>|\n", "").trim();
 
         String[] words = extracted.split("\\s+");
         if (words.length <= SHORT_STRING_LENGTH) {
@@ -59,20 +59,28 @@ public class JobUtil {
                 metadata.put(key, value);
             }
 
+            if (metadata.get("Country") == null) {
+                metadata.put("Country", "unknown");
+            }
+
             String category = metadata.get("Category").replace("&amp;", "&");
             metadata.put("Category", category);
 
-            StringBuilder builder = new StringBuilder();
-            for (String skill : metadata.get("Skills").split(",")) {
-                builder.append(skill.trim())
-                        .append(", ");
+            if (metadata.get("Skills") != null) {
+                StringBuilder builder = new StringBuilder();
+                for (String skill : metadata.get("Skills").split(",")) {
+                    builder.append(skill.trim())
+                            .append(", ");
+                }
+
+                String formattedSkills = builder.toString();
+                int lastCommaIndex = formattedSkills.lastIndexOf(",");
+
+                String skills = formattedSkills.substring(0, lastCommaIndex) + formattedSkills.substring(lastCommaIndex + 1);
+                metadata.put("Skills", skills);
+            } else {
+                metadata.put("Skills", "no skills");
             }
-
-            String formattedSkills = builder.toString();
-            int lastCommaIndex = formattedSkills.lastIndexOf(",");
-
-            String skills = formattedSkills.substring(0, lastCommaIndex) + formattedSkills.substring(lastCommaIndex + 1);
-            metadata.put("Skills", skills);
         }
 
         return metadata;

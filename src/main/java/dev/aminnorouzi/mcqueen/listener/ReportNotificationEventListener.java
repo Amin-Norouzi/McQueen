@@ -26,6 +26,7 @@ public class ReportNotificationEventListener implements ApplicationListener<Repo
         try {
             message = stringUtil.generateDailyReportMessage(report);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return;
         }
 
