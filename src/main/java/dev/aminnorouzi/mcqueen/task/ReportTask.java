@@ -40,13 +40,20 @@ public class ReportTask {
                 .map(Map.Entry::getKey)
                 .orElse(null);
 
-        User here = userService.get(heroId);
+        User hero;
+        if (heroId != null) {
+            hero = userService.get(heroId);
+        } else {
+            hero = User.builder()
+                    .username(" no data available")
+                    .build();
+        }
 
         Report report = Report.builder()
                 .total(jobs.size())
                 .submitted(submitted.size())
                 .rejected(rejected.size())
-                .hero(here)
+                .hero(hero)
                 .date(today)
                 .build();
 
