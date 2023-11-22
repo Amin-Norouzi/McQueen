@@ -2,7 +2,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/Amin-Norouzi/McQueen">
-    <img src="https://github.com/Amin-Norouzi/McQueen/blob/main/assets/mcqueen-logo.png" alt="Logo" width="80" height="80">
+    <img src="https://github.com/Amin-Norouzi/McQueen/blob/master/assets/mcqueen-logo.png" alt="Logo" width="80" height="80">
   </a>
 
 <h3 align="center">McQueen</h3>
