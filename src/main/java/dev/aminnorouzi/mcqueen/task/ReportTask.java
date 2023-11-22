@@ -28,7 +28,7 @@ public class ReportTask {
     @Scheduled(cron = "0 59 23 * * ?")
     public void getDailyReport() {
         Date today = new Date();
-        List<Job> jobs = jobService.report(today, Status.POSTED);
+        List<Job> jobs = jobService.report(today);
         List<Job> submitted = jobService.report(today, Status.SUBMITTED);
         List<Job> rejected = jobService.report(today, Status.REJECTED);
 

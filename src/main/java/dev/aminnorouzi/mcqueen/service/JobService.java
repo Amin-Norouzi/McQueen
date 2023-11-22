@@ -76,6 +76,15 @@ public class JobService {
         return jobs;
     }
 
+    public List<Job> report(Date date) {
+        List<Job> jobs = jobRepository.findAll().stream()
+                .filter(job -> DateUtils.isSameDay(job.getCreatedAt(), date))
+                .toList();
+
+        log.info("Reported jobs: date={}, {}", date, jobs);
+        return jobs;
+    }
+
     public boolean exists(String upworkId) {
         return jobRepository.existsByUpworkId(upworkId);
     }
@@ -94,10 +103,10 @@ public class JobService {
         Job job = getByUpworkId(upworkId);
         job.setStatus(Status.find(status));
 
-        Job submitted = jobRepository.save(job);
+        Job updated = jobRepository.save(job);
 
-        log.info("Submitted a job: {}", submitted);
-        return submitted;
+        log.info("Updated a job: {}", updated);
+        return updated;
     }
 
     public Job getByUpworkId(String upworkId) {
