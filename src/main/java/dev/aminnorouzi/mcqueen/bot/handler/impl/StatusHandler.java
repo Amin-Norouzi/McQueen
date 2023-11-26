@@ -42,6 +42,11 @@ public class StatusHandler implements Handler {
         User user = userService.find(update);
         Job job = jobService.update(upworkId, status);
 
+        if (!user.getId().equals(job.getUserId())) {
+            answer(bot, callback.getId(), "This job was not assigned to you!");
+            return;
+        }
+
         answer(bot, callback.getId(), "The job status has been updated.");
 
         String message = stringUtil.generateJobPostingStatusMessage(job, user);
@@ -52,7 +57,7 @@ public class StatusHandler implements Handler {
         editMessageText.setMessageId(messageId);
         editMessageText.disableWebPagePreview();
         editMessageText.setParseMode(ParseMode.HTML);
-        editMessageText.setReplyMarkup(null);
+        editMessageText.setReplyMarkup(null); // reassign keyboard
 
         bot.execute(editMessageText);
     }

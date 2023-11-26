@@ -30,7 +30,7 @@ public class JobTask {
     @Value("#{'${rss.client.keywords}'.split(',')}")
     private List<String> keywords;
 
-    @Scheduled(cron = "0 */05 * * * ?")
+    @Scheduled(cron = "0 */05 * * * ?", zone = "UTC")
     public void getJobsFromRss() {
         List<SyndEntry> entries = new ArrayList<>();
 
@@ -40,7 +40,7 @@ public class JobTask {
             entries.addAll(found);
         }
 
-        List<Job> jobs = jobService.separate(entries);
+        List<Job> jobs = jobService.convert(entries);
         applicationEventPublisher.publishEvent(new JobNotificationEvent(jobs));
     }
 }

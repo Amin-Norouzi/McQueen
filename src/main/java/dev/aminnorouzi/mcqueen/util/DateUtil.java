@@ -2,33 +2,32 @@ package dev.aminnorouzi.mcqueen.util;
 
 import org.springframework.stereotype.Component;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 @Component
 public class DateUtil {
 
-    private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-    public Date convert(String value) {
-        try {
-            return formatter.parse(value);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
+    public Instant now() {
+        return Instant.now();
     }
 
-    public String now() {
-        return formatter.format(new Date());
+    public Instant convert(Date date) {
+        return date.toInstant();
     }
 
-    public Date getStartDate() {
-        try {
-            return new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")
-                    .parse("Sun Nov 15 23:59:59 IRST 2023");
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
+    public Instant yesterday() {
+        Instant now = Instant.now();
+        return now.minus(1, ChronoUnit.DAYS);
+    }
+
+    public Instant getStartDate() {
+        return Instant.parse("2023-11-27T00:00:00Z");
+    }
+
+    public boolean verify(Date date) {
+        Instant entryDate = convert(date);
+        return entryDate.isAfter(getStartDate());
     }
 }

@@ -7,12 +7,13 @@ import dev.aminnorouzi.mcqueen.model.report.Report;
 import dev.aminnorouzi.mcqueen.model.user.User;
 import dev.aminnorouzi.mcqueen.service.JobService;
 import dev.aminnorouzi.mcqueen.service.UserService;
+import dev.aminnorouzi.mcqueen.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -24,13 +25,15 @@ public class ReportTask {
     private final JobService jobService;
     private final UserService userService;
     private final ApplicationEventPublisher applicationEventPublisher;
+    private final DateUtil dateUtil;
 
-    @Scheduled(cron = "0 59 23 * * ?")
+    @Scheduled(cron = "0 15 0 * * *", zone = "UTC")
     public void getDailyReport() {
-        Date today = new Date();
-        List<Job> jobs = jobService.report(today);
-        List<Job> submitted = jobService.report(today, Status.SUBMITTED);
-        List<Job> rejected = jobService.report(today, Status.REJECTED);
+        Instant yesterday = dateUtil.yesterday();
+
+        List<Job> jobs = jobService.report(yesterday);
+        List<Job> submitted = jobService.report(yesterday, Status.SUBMITTED);
+        List<Job> rejected = jobService.report(yesterday, Status.REJECTED);
 
         Long heroId = jobs.stream()
                 .filter(job -> !job.getStatus().equals(Status.POSTED))
@@ -54,7 +57,7 @@ public class ReportTask {
                 .submitted(submitted.size())
                 .rejected(rejected.size())
                 .hero(hero)
-                .date(today)
+                .date(yesterday)
                 .build();
 
         applicationEventPublisher.publishEvent(new ReportNotificationEvent(report));

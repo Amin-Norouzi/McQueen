@@ -8,10 +8,13 @@ import dev.aminnorouzi.mcqueen.util.DateUtil;
 import dev.aminnorouzi.mcqueen.util.JobUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -27,6 +30,7 @@ public class JobService {
         String description = jobUtil.shorten(entry.getDescription().getValue());
         String upworkId = jobUtil.extractId(entry.getLink());
         Map<String, String> metadata = jobUtil.extractMetadata(entry.getDescription().getValue());
+        Instant postedAt = dateUtil.convert(entry.getPublishedDate());
 
         Job job = Job.builder()
                 .upworkId(upworkId)
@@ -38,7 +42,7 @@ public class JobService {
                 .category(metadata.get("Category"))
                 .skills(metadata.get("Skills"))
                 .status(Status.POSTED)
-                .postedAt(entry.getPublishedDate())
+                .postedAt(postedAt)
                 .build();
 
         Job saved = jobRepository.save(job);
@@ -47,12 +51,11 @@ public class JobService {
         return saved;
     }
 
-    public List<Job> separate(List<SyndEntry> SyndEntry) {
+    public List<Job> convert(List<SyndEntry> entries) {
         List<Job> newJobs = new ArrayList<>();
-        Date startDate = dateUtil.getStartDate();
 
-        for (SyndEntry entry : SyndEntry) {
-            if (!entry.getPublishedDate().after(startDate)) {
+        for (SyndEntry entry : entries) {
+            if (!dateUtil.verify(entry.getPublishedDate())) {
                 continue;
             }
 
@@ -67,19 +70,15 @@ public class JobService {
                 .toList();
     }
 
-    public List<Job> report(Date date, Status status) {
-        List<Job> jobs = jobRepository.findByStatus(status).stream()
-                .filter(job -> DateUtils.isSameDay(job.getCreatedAt(), date))
-                .toList();
+    public List<Job> report(Instant date, Status status) {
+        List<Job> jobs = jobRepository.findByAppliedAtAndStatus(date, status);
 
         log.info("Reported jobs: status, {}, date={}, {}", status, date, jobs);
         return jobs;
     }
 
-    public List<Job> report(Date date) {
-        List<Job> jobs = jobRepository.findAll().stream()
-                .filter(job -> DateUtils.isSameDay(job.getCreatedAt(), date))
-                .toList();
+    public List<Job> report(Instant date) {
+        List<Job> jobs = jobRepository.findByCreatedAt(date);
 
         log.info("Reported jobs: date={}, {}", date, jobs);
         return jobs;
@@ -92,6 +91,8 @@ public class JobService {
     public Job assign(String upworkId, Long userId) {
         Job job = getByUpworkId(upworkId);
         job.setUserId(userId);
+        job.setStatus(Status.ASSIGNED);
+        job.setAssignedAt(dateUtil.now());
 
         Job assigned = jobRepository.save(job);
 
@@ -99,13 +100,26 @@ public class JobService {
         return assigned;
     }
 
+//    public Job reassign(String upworkId, Long userId) {
+//        Job job = getByUpworkId(upworkId);
+//        job.setUserId(userId);
+//        job.setStatus(Status.ASSIGNED);
+//        job.setAssignedAt(dateUtil.now());
+//
+//        Job reassigned = jobRepository.save(job);
+//
+//        log.info("Reassigned a job: {}", reassigned);
+//        return reassigned;
+//    }
+
     public Job update(String upworkId, String status) {
         Job job = getByUpworkId(upworkId);
-        job.setStatus(Status.find(status));
+        job.setStatus(Status.from(status));
+        job.setAppliedAt(dateUtil.now());
 
         Job updated = jobRepository.save(job);
 
-        log.info("Updated a job: {}", updated);
+        log.info("Updated a job: status={}, {}", status, updated);
         return updated;
     }
 

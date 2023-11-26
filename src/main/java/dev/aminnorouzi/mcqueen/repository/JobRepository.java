@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,4 +21,10 @@ public interface JobRepository extends JpaRepository<Job, Long> {
 
     @Query("select j from Job j where j.status = ?1")
     List<Job> findByStatus(Status status);
+
+    @Query("select j from Job j where j.createdAt = ?1")
+    List<Job> findByCreatedAt(Instant createdAt);
+
+    @Query("select j from Job j where j.appliedAt = ?1 and j.status = ?2")
+    List<Job> findByAppliedAtAndStatus(Instant appliedAt, Status status);
 }

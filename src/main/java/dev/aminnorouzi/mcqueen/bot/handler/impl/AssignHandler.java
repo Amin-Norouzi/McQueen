@@ -49,6 +49,7 @@ public class AssignHandler implements Handler {
 
         answer(bot, callback.getId(), "This job is now assigned to you.");
 
+        StatusKeyboard keyboard = new StatusKeyboard();
         String message = stringUtil.generateJobPostingSAssignMessage(job, user);
 
         EditMessageText editMessageText = new EditMessageText();
@@ -57,14 +58,8 @@ public class AssignHandler implements Handler {
         editMessageText.setMessageId(messageId);
         editMessageText.disableWebPagePreview();
         editMessageText.setParseMode(ParseMode.HTML);
-
-        if (chatId.equals(user.getChatId())) {
-            StatusKeyboard keyboard = new StatusKeyboard();
-            editMessageText.setReplyMarkup(keyboard.getKeyboard(upworkId));
-        } else {
-            editMessageText.setReplyMarkup(null);
-        }
-
+        editMessageText.setReplyMarkup(keyboard.getKeyboard(upworkId));
+        
         bot.execute(editMessageText);
     }
 }

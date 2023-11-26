@@ -3,13 +3,13 @@ package dev.aminnorouzi.mcqueen.model.job;
 public enum Status {
 
     POSTED,
-    CHECKED,
+    ASSIGNED,
     SUBMITTED,
     REJECTED;
 
-    public static Status find(String value) {
+    public static Status from(String value) {
         return switch (value) {
-            case "checked" -> Status.CHECKED;
+            case "assigned" -> Status.ASSIGNED;
             case "submitted" -> Status.SUBMITTED;
             case "rejected" -> Status.REJECTED;
             default -> Status.POSTED;

@@ -6,6 +6,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.Instant;
 import java.util.Date;
 
 @Getter
@@ -41,15 +42,18 @@ public class Job {
     @Column(length = 1250)
     private String skills;
 
+    @Enumerated(EnumType.STRING)
     private Status status;
 
-    private Date postedAt;
+    private Instant assignedAt;
+    private Instant appliedAt;
+    private Instant postedAt;
 
     @CreatedDate
     @Column(updatable = false)
-    private Date createdAt;
+    private Instant createdAt;
 
     @LastModifiedDate
     @Column(insertable = false)
-    private Date modifiedAt;
+    private Instant modifiedAt;
 }

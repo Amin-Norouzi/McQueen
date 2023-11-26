@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.Instant;
 
 @Data
 @Builder
@@ -18,5 +18,5 @@ public class Report {
     private Integer submitted;
     private Integer rejected;
     private User hero;
-    private Date date;
+    private Instant date;
 }
