@@ -4,6 +4,7 @@ import dev.aminnorouzi.mcqueen.model.user.User;
 import dev.aminnorouzi.mcqueen.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -15,6 +16,9 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+
+    @Value("${telegram.bot.user-id}")
+    private Long defaultUserId;
 
     public User create(Update update) {
         User user = User.builder()
@@ -67,4 +71,14 @@ public class UserService {
         return found;
     }
 
+    public void initialize() {
+        if (!exists(defaultUserId)) {
+            User user = User.builder()
+                    .id(defaultUserId)
+                    .username("No specific user")
+                    .build();
+
+            userRepository.save(user);
+        }
+    }
 }

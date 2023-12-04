@@ -21,14 +21,7 @@ public class ReportNotificationEventListener implements ApplicationListener<Repo
     @Override
     public void onApplicationEvent(ReportNotificationEvent event) {
         Report report = event.getReport();
-
-        String message;
-        try {
-            message = stringUtil.generateDailyReportMessage(report);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return;
-        }
+        String message = stringUtil.generateDailyReportMessage(report);
 
         SendMessage sendMessage = new SendMessage();
         sendMessage.setText(message);

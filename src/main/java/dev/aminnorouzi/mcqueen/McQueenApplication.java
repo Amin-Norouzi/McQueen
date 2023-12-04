@@ -1,6 +1,7 @@
 package dev.aminnorouzi.mcqueen;
 
 import dev.aminnorouzi.mcqueen.bot.Bot;
+import dev.aminnorouzi.mcqueen.service.UserService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,8 +22,10 @@ public class McQueenApplication {
     }
 
     @Bean
-    public CommandLineRunner commandLineRunner(Bot bot) {
+    public CommandLineRunner commandLineRunner(Bot bot, UserService service) {
         return args -> {
+            service.initialize();
+
             try {
                 TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
                 botsApi.registerBot(bot);
